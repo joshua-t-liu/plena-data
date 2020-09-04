@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <style>
+      body, form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      input {
+        margin: 1em;
+      }
+      .result {
+        color: dodgerblue;
+      }
+      #error {
+        color: red;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Plena Data - Assessment</h1>
+    <form onsubmit="process(event)">
+      <label>
+        Enter a string
+        <input type="text"  name="string" id="string" required />
+        <div id="error">Input should be at least 1 character</div>
+     </label>
+      <input type="submit" value="submit" />
+    </form>
+    <div>
+      <div>
+        <span>First unique letter is </span>
+        <span class="result" id="unique"></span>
+      </div>
+
+      <div>
+        <span>Reordered word by frequency and character order is </span>
+        <span class="result" id="reordered"></span>
+      </div>
+    </div>
+    <script>
+
+      const reorder = function(val){
+        const freq = new Map();
+        for(let i=0; i < val.length; i++) {
+          freq.set(val[i].toLowerCase(), (freq.get(val[i].toLowerCase()) || '') + val[i]);
+        }
+
+        const ordered = Array.from(freq).map(([key, val], i) => [val, i]);
+
+        ordered.sort((a, b) => {
+          const [str1, ord1] = a;
+          const [str2, ord2] = b;
+          if (str1.length === str2.length) return ord1 - ord2;
+          return str1.length - str2.length;
+        });
+
+        return ordered.reduce((res, val) => res + val[0], '');
+      };
+
+      const process = function(event) {
+        event.preventDefault();
+        const val = document.getElementById('string').value.trim();
+
+        if (val && val.length) {
+          document.getElementById('error').style.display = 'none';
+          const res = reorder(val);
+
+          document.getElementById('unique').innerText = 'no unique characters';
+          if (res[0].toLowerCase() !== (res[1] && res[1].toLowerCase())) {
+            document.getElementById('unique').innerText = res[0];
+          }
+
+          document.getElementById('reordered').innerText = res;
+        } else {
+          document.getElementById('error').style.display = 'block';
+        }
+      };
+
+    </script>
+  </body>
+</html>
